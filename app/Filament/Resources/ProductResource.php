@@ -23,7 +23,26 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\FileUpload::make('image_path')
+                    ->default('no_image_available.jpg')
+                    ->image(),
+                Forms\Components\Textarea::make('description')
+                    ->columnSpanFull(),
+                Forms\Components\Repeater::make('variants')
+                    ->relationship()
+                    ->schema([                        
+                        Forms\Components\TextInput::make('qty'),
+                        Forms\Components\TextInput::make('unit_price')->required(),
+                    ])
+                    ->reorderable(true)
+                    ->reorderableWithButtons()
+                    // ->collapsible()
+                    ->cloneable()
+                    ->columns(2)
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -31,7 +50,18 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
+                Tables\Columns\ImageColumn::make('image_path')
+                    ->getStateUsing(fn(Product $record): string => $record->GetImagePath()),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
