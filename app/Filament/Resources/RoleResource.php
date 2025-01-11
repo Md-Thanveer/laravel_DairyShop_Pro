@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoleResource\Pages;
 use App\Filament\Resources\RoleResource\RelationManagers;
-use App\Models\Role;
+
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,17 +13,35 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
+// Import Model
+use Spatie\Permission\Models\Role;
+
+
 class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-finger-print';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationGroup = 'Settings';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+
+                Forms\Components\Section::make('User Roles')
+                    ->description('Role Must be Minimum 2 Maximum 255 Character')
+                    ->schema([            
+                        Forms\Components\TextInput::make('name')
+                            ->minLength(2)
+                            ->maxLength(255)
+                            ->required()
+                            ->unique()
+                    ])
+
             ]);
     }
 
@@ -31,7 +49,7 @@ class RoleResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name')
             ])
             ->filters([
                 //
